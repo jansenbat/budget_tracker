@@ -2,7 +2,7 @@
 Why: keep track of my expenses, savings, and wants
     - Used to see if I can afford things or not
     - Used to help plan bills payments better
-    - Used to control my spending because honestly sometimes I have no idea what my financial ability is
+    - Used to make better financial decisions
 """
 
 
