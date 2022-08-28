@@ -19,7 +19,7 @@ income1 = {
     'invest' : 1000
 }
 income2 = {
-    'dog' : 1000
+    'business' : 1000
 }
 income_total = sum(income1.values()) + sum(income2.values())
 
