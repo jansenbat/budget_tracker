@@ -5,7 +5,6 @@ Why: keep track of my expenses, savings, and wants
     - Used to make better financial decisions
 """
 
-
 consent = True
 while consent == True:   # asking the user for consent on if they're willing to enter private financial information
     ask_consent = input("""To start, we will need to ask for a few information regarding your finances.
@@ -20,38 +19,45 @@ while consent == True:   # asking the user for consent on if they're willing to 
         print("Invalid input. Try again.")
         continue
 
-inc_fix = {}
-inc_var = {}
-inc_total = []   # make equation that takes the total of all incomes
+# dictionary that holds the users income info
+inc_info = {}
+inc_total = sum(inc_info.values())
 
-exp_fix = {}
-exp_var = {}
-exp_total = []   # make equation that takes the total of all incomes
+# dictionary that holds the users expense info
+exp_info = {}
+exp_total = sum(exp_info.values())
 
+# dictionary that holds the users budget plan information
 budget_plan = {
     'expenses' : 50,
     'wants' : 30,
     'savings' : 20
 }
+budget_info = {
+    'exp_plan' : int(inc_total * (budget_plan['expenses'] / 100)),
+    'want_plan' : int(inc_total * (budget_plan['wants'] / 100)),
+    'save_plan' : int(inc_total * (budget_plan['savings'] / 100))
+}
 
-def add_to(aDict, name_of):   # function that adds new entries to a dictionary
+# this function adds new entries to specific dictionaries
+def add_to(aDict):
     """
     aDict: any dictionary to add to
     name_of: a string, just used to print the name of the dictionary being interacted with
     """
-    add_name = input("What is the name of the " + name_of + ": ")
-    add_amount = input("What is the amount of the " + name_of + ": ")
-    aDict[add_name.lower()] = float(add_amount)
+    add_name = input("What would you like to enter: ")
+    add_amount = input("What is the amount of the item: ")
+    aDict[add_name.lower()] = int(add_amount)
 
-def del_from(aDict, name_of):   # function that deletes a key-value pair from a dictionary
+# this function deletes a key-value pair from a dictionary
+def del_from(aDict):
     """
     aDict: any dictionary to delete from
     name_of: a string, just used to print the name of the dictionary being interacted with
     """
     while True:
         print(aDict)
-        print("To quit this action, enter 'q'.")
-        del_name = input("Which " + name_of + " would you like to delete? Enter name: ").lower()
+        del_name = input("Which item would you like to delete ('q' to quit)? Enter name: ").lower()
         if del_name == 'q':
             break
         elif del_name in aDict:
@@ -65,7 +71,7 @@ def del_from(aDict, name_of):   # function that deletes a key-value pair from a 
                 continue
             else:
                 print("Invalid input.")
-            del_more = input("Would you like to delete another " + name_of +"? y/n: ")
+            del_more = input("Would you like to delete another item? y/n: ")
             if del_more == 'y':
                 continue
             elif del_more == 'n':
@@ -74,7 +80,7 @@ def del_from(aDict, name_of):   # function that deletes a key-value pair from a 
                 print("Invalid input.")
                 continue   # send the user back to the top of the while loop
         else:
-            ask_again = input("We don't see that " + name_of + ". Would you like to try again? ").lower()
+            ask_again = input("We don't see that value. Would you like to try again? y/n: ").lower()
             if ask_again == 'y':
                 continue
             elif ask_again == 'n':
@@ -83,7 +89,39 @@ def del_from(aDict, name_of):   # function that deletes a key-value pair from a 
                 print("Invalid input.")
                 continue   # send the user back to the top of the while loop
 
-def view_dict(aDict, name_of):   # function that allows the user to view their dictionary
+# this function modifies the value of an already existing item in a dictionary
+def mod_amount(aDict):
+    """
+    aDict: the dictionary with the item's value being changed
+    """
+    while True:
+        print(aDict)
+        to_mod = input("Which item's value would you like to change ('q' to quit)? ")
+        if to_mod == 'q':
+            print("Going back to the main page.")
+            break
+        elif to_mod in aDict:
+            mod_val = int(input("What is the item's new amount? "))
+            mod_confirm = input("Are you sure you want to change the value? y/n: ").lower()
+            if mod_confirm == 'y':
+                aDict[to_mod] = mod_val
+                print(aDict[to_mod])
+                print("The item's value was successfully changed")
+            elif mod_confirm == 'n':
+                print("The value will not be changed.")
+                continue
+            else:
+                print("Invalid input. Try again.")
+                continue
+        elif to_mod not in aDict:
+            print("That item was not found. Please try again.")
+            continue
+        else:
+            print("Invalid input. Try again.")
+            continue
+
+# this function allows the user to view specific dictionaries
+def view_dict(aDict, name_of):
     """
     aDict: any dictionary the user would like to view
     name_of: just used to display the name of the dictionary being accessed
@@ -92,6 +130,7 @@ def view_dict(aDict, name_of):   # function that allows the user to view their d
     for key, value in aDict.items():
         print(key + " : " + str(value))
 
+# this function allows the user to change their budget plan
 def change_plan(bp):
     """
     bp: the budget plan dictionary
@@ -124,6 +163,7 @@ def change_plan(bp):
             print("Invalid input, please try again.")
             continue
 
+# this function shows the user a recommended budget allocation amount
 def rec_exp(d1, d2):
     d1_values = d1.values()
     d1_total = sum(d1_values)
@@ -132,19 +172,81 @@ def rec_exp(d1, d2):
     recommended_ratio = int((d1_total / d2_total) * 100)
     print("Based on your financial standing, the recommended expense allocation ratio is: " + str(recommended_ratio) + ".")
 
+# this function tells the user what range percentage their 'want' falls under
+def want_this():
+    want_val = int((budget_plan['wants'] / 100) * inc_total)
+    what_u_want = int(input("How much does the 'want' cost? "))
+    want_dict = {   # playing with dictionaries
+        '20' : int(want_val / 20),
+        '40' : int(want_val / 40),
+        '60' : int(want_val / 60),
+        '80' : int(want_val / 80),
+        '100' : int(want_val)
+    }
+    if what_u_want <= want_dict['20']:
+        print("This 'want' is within the 20 percent range for your tolerable wants budget.")
+    elif want_dict['20'] < what_u_want <= want_dict['40']:
+        print("This 'want' is within the 20 to 40 percent range for your tolerable wants budget.")
+    elif want_dict['40'] < what_u_want <= want_dict['60']:
+        print("This 'want' is within the 40 to 60 percent range for your tolerable wants budget.")
+    elif want_dict['60'] < what_u_want <= want_dict['80']:
+        print("This 'want' is within the 60 to 80 percent range for your tolerable wants budget.")
+    elif want_dict['80'] < what_u_want <= want_dict['100']:
+        print("This 'want' is within the 80 to 100 percent range for your tolerable wants budget.")
+    elif want_dict['100'] < what_u_want:
+        print("This 'want' surpasses your tolerable monthly wants budget.")
+    else:
+        print("Invalid input.")
 
-def purchase_adv():
-    pass
+# this function allows the user to set a save plan with a target goal and monthly timeframe
+def save_plan():
+    save_goal = int(input("How much money would you like to save? "))
+    save_time = int(input("In how many months do you need it? "))
+    save_per_month = int(save_goal / save_time)
+    save_plan = float((save_per_month / inc_total) * 100)
+    print("In order to save $" + str(save_goal) + " in " + str(save_time) + " month(s), you would need to save $" + str(save_per_month))
+    print("This means you would need to allocate at least " + str((round(save_plan, 2))) + " for your 'savings' budget.")
+    print("Your current savings allocation is: " + str(budget_plan['savings']))
 
-def expense_adv():
-    pass
+# this function allows the user to play with the dictionaries to 
+def budget_play(aDict, type):
+    """
+    aDict: dictionary being played with
+    type: 'inc' or 'exp' just used for the status report section of the function
+    """
+    copy_dict = aDict.copy()
+    while True:
+        print(copy_dict)
+        options = input("What would you like to do? add(a), delete(d), update(u), restart(r), status(s), quit(q)? ").lower()
+        if options == 'q':
+            break
+        elif options == 'a':
+            add_to(copy_dict)
+            continue
+        elif options == 'd':
+            del_from(copy_dict)
+            continue
+        elif options == 'u':
+            mod_amount(copy_dict)
+            continue
+        elif options == 'r':
+            copy_dict = aDict.copy()
+            continue
+        elif options == 's':
+            copy_sum = int(sum(copy_dict.values()))
+            if type == 'inc':
+                copy_sum_exp = int((exp_total / copy_sum) * 100)
+                print("Your new income would be: " + str(copy_sum))
+                print("Your new tolerable expense budget would be: " + str(copy_sum_exp))
+            else:   # type == 'exp'
+                copy_sum_inc = int((copy_sum / inc_total) * 100)
+                print("Your new expense would be: " + str(copy_sum))
+                print("Your new tolerable expense budget would be: " + str(copy_sum_inc))
+        else:
+            print("Invalid input.")
+            continue
 
-def ideal_inc():
-    pass
-
-def ideal_exp():
-    pass
-
+# Terminal interface that the user will interact with
 while True:
     print("""
     Sections Menu:
@@ -165,8 +267,8 @@ while True:
     elif choice == 'v' or 'V':
         print("""
         1. Modify Budget Information
-            a. Modify income (fixed and variable)
-            b. Modify expenses (fixed and variable)
+            a. Modify income
+            b. Modify expenses
             c. Modify savings goal
         2. Budget Analysis
             d. Recommended income
