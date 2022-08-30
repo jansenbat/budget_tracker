@@ -1,12 +1,18 @@
 """
-Why: keep track of my expenses, savings, and wants
+What it is:
+    - A simple program for budget management
+
+Why I made it:
+    - Keep track of my expenses, savings, and wants
     - Used to see if I can afford things or not
     - Used to help plan bills payments better
     - Used to make better financial decisions
 """
 
+
+# Asking the user for consent on if they're willing to enter personal financial information
 consent = True
-while consent == True:   # asking the user for consent on if they're willing to enter private financial information
+while consent == True:
     ask_consent = input("""To start, we will need to ask for a few information regarding your finances.
     If that is okay and you wish to continue enter 'y'. If not, enter 'n': """).lower()
     if ask_consent == 'y':
@@ -19,13 +25,17 @@ while consent == True:   # asking the user for consent on if they're willing to 
         print("Invalid input. Try again.")
         continue
 
+
+
 # dictionary that holds the users income info
 inc_info = {}
 inc_total = sum(inc_info.values())
 
+
 # dictionary that holds the users expense info
 exp_info = {}
 exp_total = sum(exp_info.values())
+
 
 # dictionary that holds the users budget plan information
 budget_plan = {
@@ -34,11 +44,13 @@ budget_plan = {
     'savings' : 20
 }
 
+
 budget_info = {
     'exp_plan' : int(inc_total * (budget_plan['expenses'] / 100)),
     'want_plan' : int(inc_total * (budget_plan['wants'] / 100)),
     'save_plan' : int(inc_total * (budget_plan['savings'] / 100))
 }
+
 
 
 # this function adds new entries to specific dictionaries
@@ -49,23 +61,28 @@ def add_to(aDict):
     """
     print(aDict)
     while True:
-        add_name = str(input("What would you like to enter (q to quit): ")).lower()
-        if add_name == 'q':
-            break
-        else:
-            add_amount = int(input("What is the amount of the item: "))
-            print(add_name + " : " + str(add_amount))
-            add_confirm = input("Do you wish to confirm this entry? y/n: ").lower()
-            if add_confirm == 'y':
-                aDict[add_name.lower()] = int(add_amount)
-                print(aDict)
-                print("Item successfully added.")
-            elif add_confirm == 'n':
-                print("Item will not be added.")
-                continue
+        try:
+            add_name = str(input("What would you like to enter (q to quit): ")).lower()
+            if add_name == 'q':
+                break
             else:
-                print("Invalid input, try again.")
-                continue
+                add_amount = int(input("What is the amount of the item: "))
+                print(add_name + " : " + str(add_amount))
+                add_confirm = input("Do you wish to confirm this entry? y/n: ").lower()
+                if add_confirm == 'y':
+                    aDict[add_name.lower()] = int(add_amount)
+                    print(aDict)
+                    print("Item successfully added.")
+                elif add_confirm == 'n':
+                    print("Item will not be added.")
+                    continue
+                else:
+                    print("Invalid input, try again.")
+                    continue
+        except ValueError:
+            print("Looks like you didn't put in a number. Please try again.")
+            continue
+
 
 
 # this function deletes a key-value pair from a dictionary
@@ -79,6 +96,7 @@ def del_from(aDict):
         del_name = input("Which item would you like to delete (q to quit)? Enter name: ").lower()
         if del_name == 'q':
             break
+
         elif del_name in aDict:
             del_confirm = input("Are you sure you want to delete " + del_name + "? y/n: ").lower()
             if del_confirm == 'y':
@@ -98,6 +116,7 @@ def del_from(aDict):
             else:
                 print("Invalid input.")
                 continue   # send the user back to the top of the while loop
+
         else:
             ask_again = input("We don't see that value. Would you like to try again? y/n: ").lower()
             if ask_again == 'y':
@@ -109,36 +128,43 @@ def del_from(aDict):
                 continue   # send the user back to the top of the while loop
 
 
+
 # this function modifies the value of an already existing item in a dictionary
 def mod_amount(aDict):
     """
     aDict: the dictionary with the item's value being changed
     """
     while True:
-        print(aDict)
-        to_mod = input("Which item's value would you like to change (q to quit)? ")
-        if to_mod == 'q':
-            print("Going back to the main page.")
-            break
-        elif to_mod in aDict:
-            mod_val = int(input("What is the item's new amount? "))
-            mod_confirm = input("Are you sure you want to change the value? y/n: ").lower()
-            if mod_confirm == 'y':
-                aDict[to_mod] = mod_val
-                print(aDict[to_mod])
-                print("The item's value was successfully changed")
-            elif mod_confirm == 'n':
-                print("The value will not be changed.")
+        try:
+            print(aDict)
+            to_mod = input("Which item's value would you like to change (q to quit)? ")
+            if to_mod == 'q':
+                print("Going back to the main page.")
+                break
+            elif to_mod in aDict:
+                mod_val = int(input("What is the item's new amount? "))
+                mod_confirm = input("Are you sure you want to change the value? y/n: ").lower()
+                if mod_confirm == 'y':
+                    aDict[to_mod] = mod_val
+                    print(aDict[to_mod])
+                    print("The item's value was successfully changed")
+                elif mod_confirm == 'n':
+                    print("The value will not be changed.")
+                    continue
+                else:
+                    print("Invalid input. Try again.")
+                    continue
+            elif to_mod not in aDict:
+                print("That item was not found. Please try again.")
                 continue
             else:
                 print("Invalid input. Try again.")
                 continue
-        elif to_mod not in aDict:
-            print("That item was not found. Please try again.")
+
+        except ValueError:
+            print("Looks like you didn't enter a number. Please try again.")
             continue
-        else:
-            print("Invalid input. Try again.")
-            continue
+
 
 
 # this function allows the user to change their budget plan
@@ -148,32 +174,46 @@ def change_plan(bp):
     """
     print("Note: the new budget plan must equal to 100.")
     while True:
-        new_expense = int(input("How much would you like to allocate towards expenses? "))
-        new_wants = int(input("How much would you like to allocate towards wants? "))
-        new_savings = int(input("How much would you like to allocate towards savings? "))
-        new_total = new_expense + new_wants + new_savings
+        quit_or_not = input("Do you wish to continue? y/n: ")
+        if quit_or_not == 'n':
+            break
+        elif quit_or_not == 'y':
+            try:
+                new_expense = int(input("How much would you like to allocate towards expenses? "))
+                new_wants = int(input("How much would you like to allocate towards wants? "))
+                new_savings = int(input("How much would you like to allocate towards savings? "))
+                new_total = new_expense + new_wants + new_savings
 
-        if new_total != 100:
-            print("Those number's don't add up to 100, please try again.")
-            continue
-        elif new_total == 100:
-            double_check = input("Your new budget plan is about to be saved, are you sure you want to confirm? y/n: ").lower()
-            if double_check == 'y':
-                bp['expenses'] = new_expense
-                bp['wants'] = new_wants
-                bp['savings'] = new_savings
-                print(bp)
-                print("Your new budget plan was successfully saved.")
-                break
-            elif double_check == 'n':
-                print("The changes will not be made, you may try again.")
+                if new_total != 100:
+                    print("Those number's don't add up to 100, please try again.")
+                    continue
+                elif new_total == 100:
+                    double_check = input("Your new budget plan is about to be saved, are you sure you want to confirm? y/n: ").lower()
+                    if double_check == 'y':
+                        bp['expenses'] = new_expense
+                        bp['wants'] = new_wants
+                        bp['savings'] = new_savings
+                        print(bp)
+                        print("Your new budget plan was successfully saved.")
+                        break
+                    elif double_check == 'n':
+                        print("The changes will not be made, you may try again.")
+                        continue
+                    else:
+                        print("Invalid input, please try again.")
+                        continue
+                else:
+                    print("Invalid input, please try again.")
+                    continue
+
+            except ValueError:
+                print("Looks like you didn't enter a number. Please try again.")
                 continue
-            else:
-                print("Invalid input, please try again.")
-                continue
+
         else:
-            print("Invalid input, please try again.")
+            print("Invalid input. Please try again.")
             continue
+
 
 
 # this function allows the user to view specific dictionaries
@@ -186,6 +226,7 @@ def view_dict(aDict, name_of):
 
     for key, value in aDict.items():
         print(key + " : " + str(value))
+
 
 
 # this function shows the user a recommended income for their current financial situation
@@ -201,11 +242,14 @@ def rec_inc():
 
     if actual_ratio == plan_ratio:
         print("Your actual ratio is equal to your expense plan, this means you do not need to change your income.")
+
     elif actual_ratio < plan_ratio:
         print("Your actual ratio is BELOW your expense plan, this means that you may have enough income to compensate expenses.")
+
     else:
         print("Your actual ratio is ABOVE your expense plan, this means that you would need to increase your income.")
         print("You would need to make at least: $" + str(needed_inc) + ", to meet your expense plan.")
+
 
 
 # this function shows the user a recommended expense for their current financial situation
@@ -221,49 +265,91 @@ def rec_exp():
 
     if actual_ratio == plan_ratio:
         print("Your actual ratio is equal to your expense plan, this means you do not need to change your expenses.")
+
     elif actual_ratio < plan_ratio:
         print("Your actual ratio is BELOW your expense plan, this means you have more than enough income to compensate expenses.")
+
     else:
         print("Your actual ratio is ABOVE your expense plan, this means that you would need to decrease your expenses.")
         print("Your expenses would need to be at most: $" + str(needed_exp) + ", to meet your expense plan.")
 
 
+
 # this function tells the user what range percentage their 'want' falls under
 def want_this():
     want_val = int((budget_plan['wants'] / 100) * inc_total)
-    what_u_want = int(input("How much does the 'want' cost? "))
-    want_dict = {   # playing with dictionaries
-        '20' : int(want_val / 20),
-        '40' : int(want_val / 40),
-        '60' : int(want_val / 60),
-        '80' : int(want_val / 80),
-        '100' : int(want_val)
-    }
-    if what_u_want <= want_dict['20']:
-        print("This 'want' is within the 20 percent range for your tolerable wants budget.")
-    elif want_dict['20'] < what_u_want <= want_dict['40']:
-        print("This 'want' is within the 20 to 40 percent range for your tolerable wants budget.")
-    elif want_dict['40'] < what_u_want <= want_dict['60']:
-        print("This 'want' is within the 40 to 60 percent range for your tolerable wants budget.")
-    elif want_dict['60'] < what_u_want <= want_dict['80']:
-        print("This 'want' is within the 60 to 80 percent range for your tolerable wants budget.")
-    elif want_dict['80'] < what_u_want <= want_dict['100']:
-        print("This 'want' is within the 80 to 100 percent range for your tolerable wants budget.")
-    elif want_dict['100'] < what_u_want:
-        print("This 'want' surpasses your tolerable monthly wants budget.")
-    else:
-        print("Invalid input.")
+    while True:
+        try:
+            what_u_want = int(input("How much does the 'want' cost? "))
+            want_dict = {   # playing with dictionaries
+                '20' : int(want_val / 20),
+                '40' : int(want_val / 40),
+                '60' : int(want_val / 60),
+                '80' : int(want_val / 80),
+                '100' : int(want_val)
+            }
+
+            if what_u_want <= want_dict['20']:
+                print("This 'want' is within the 20 percent range for your tolerable wants budget.")
+            elif want_dict['20'] < what_u_want <= want_dict['40']:
+                print("This 'want' is within the 20 to 40 percent range for your tolerable wants budget.")
+            elif want_dict['40'] < what_u_want <= want_dict['60']:
+                print("This 'want' is within the 40 to 60 percent range for your tolerable wants budget.")
+            elif want_dict['60'] < what_u_want <= want_dict['80']:
+                print("This 'want' is within the 60 to 80 percent range for your tolerable wants budget.")
+            elif want_dict['80'] < what_u_want <= want_dict['100']:
+                print("This 'want' is within the 80 to 100 percent range for your tolerable wants budget.")
+            elif want_dict['100'] < what_u_want:
+                print("This 'want' surpasses your tolerable monthly wants budget.")
+            else:
+                print("Invalid input.")
+
+        except ValueError:
+            print("Looks like you didn't enter a number. Please try again.")
+            quit_or_not = input("Would you like to continue? y/n: ").lower()
+            if quit_or_not == 'n':
+                break
+            elif quit_or_not == 'y':
+                continue
+            else:
+                print("Invalid input.")
+                continue
+
+
 
 
 # this function allows the user to set a save plan with a target goal and monthly timeframe
 def save_plan():
-    save_goal = int(input("How much money would you like to save? "))
-    save_time = int(input("In how many months do you need it? "))
-    save_per_month = int(save_goal / save_time)
-    save_plan = float((save_per_month / inc_total) * 100)
-    print("In order to save $" + str(save_goal) + " in " + str(save_time) + " month(s), you would need to save $" + str(save_per_month))
-    print("This means you would need to allocate at least " + str((round(save_plan, 2))) + " for your 'savings' budget.")
-    print("Your current savings allocation is: " + str(budget_plan['savings']))
+    while True:
+        try:
+            save_goal = int(input("How much money would you like to save? "))
+            save_time = int(input("In how many months do you need it? "))
+            save_per_month = int(save_goal / save_time)
+            save_plan = float((save_per_month / inc_total) * 100)
+
+            print("In order to save $" + str(save_goal) + " in " + str(save_time) + " month(s), you would need to save $" + str(save_per_month))
+            print("This means you would need to allocate at least " + str((round(save_plan, 2))) + " for your 'savings' budget.")
+            print("Your current savings allocation is: " + str(budget_plan['savings']))
+
+            another_entry = input("Would you like to try another entry? y/n: ").lower()
+            if another_entry == 'y':
+                continue
+            elif another_entry == 'n':
+                break
+            else:
+                print("Invalid input.")
+                continue
+
+        except ValueError:
+            try_again = input("Looks like you didn't enter a number, would you like to try again? y/n: ").lower()
+            if try_again == 'y':
+                continue
+            elif try_again == 'n':
+                break
+            else:
+                print("Invalid input, please try again.")
+                continue
+
 
 
 # this function allows the user to play with the dictionaries to 
@@ -276,20 +362,26 @@ def budget_play(aDict, type):
     while True:
         print(copy_dict)
         options = input("What would you like to do? add(a), delete(d), update(u), restart(r), status(s), quit(q)? ").lower()
+
         if options == 'q':
             break
+
         elif options == 'a':
             add_to(copy_dict)
             continue
+
         elif options == 'd':
             del_from(copy_dict)
             continue
+
         elif options == 'u':
             mod_amount(copy_dict)
             continue
+
         elif options == 'r':
             copy_dict = aDict.copy()
             continue
+
         elif options == 's':
             copy_sum = int(sum(copy_dict.values()))
             if type == 'inc':
@@ -300,10 +392,15 @@ def budget_play(aDict, type):
                 copy_sum_inc = int((copy_sum / inc_total) * 100)
                 print("Your new expense would be: " + str(copy_sum))
                 print("Your new tolerable expense budget would be: " + str(copy_sum_inc))
+
         else:
             print("Invalid input.")
             continue
 
+
+
+
+# This is the interface the user will interact with
 
 # Setting initial values for the income, expense, and budget plan
 initial_set = True
@@ -343,7 +440,8 @@ while initial_set == True:
         continue
 
 
-# Terminal interface that the user will interact with
+
+# Main interface that the user will interact with after setting the initial information
 while True:
     print("""
     Sections Menu:
